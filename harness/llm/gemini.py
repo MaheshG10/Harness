@@ -61,11 +61,14 @@ def to_contents(messages: list[Message]) -> list[dict]:
     contents = []
     for m in messages:
         parts: list[dict] = []
+        text_part: dict[str, Any] | None = None
         if m.text:
-            p: dict[str, Any] = {"text": m.text}
+            text_part = {"text": m.text}
             if m.text_signature:
-                p["thoughtSignature"] = m.text_signature
-            parts.append(p)
+                text_part["thoughtSignature"] = m.text_signature
+        # function responses must come first in a user turn; text goes after
+        if text_part and not m.tool_results:
+            parts.append(text_part)
         for c in m.tool_calls:
             fc: dict[str, Any] = {"name": c.name, "args": c.args}
             if c.id:
@@ -80,6 +83,8 @@ def to_contents(messages: list[Message]) -> list[dict]:
             if r.id:
                 fr["id"] = r.id
             parts.append({"functionResponse": fr})
+        if text_part and m.tool_results:
+            parts.append(text_part)
         if parts:
             contents.append({"role": m.role, "parts": parts})
     return contents

@@ -1,0 +1,5 @@
+id: slugify
+prompt: |
+  Implement `slugify` in text_utils.py so the tests pass. Read the docstring
+  and the tests for the exact rules.
+test_command: python -m pytest -q

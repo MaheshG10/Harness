@@ -1,0 +1,4 @@
+id: mean_off_by_one
+prompt: |
+  The tests in this repo fail. Find the bug in stats.py and fix it.
+test_command: python -m pytest -q

@@ -1,0 +1,6 @@
+id: config_parser
+prompt: |
+  `confkit.load_config` drops values that contain an '=' sign, for example
+  `url = https://x.io/?a=1` comes back as `https://x.io/?a`. Fix it so the
+  tests pass. The bug may not be in the file you expect.
+test_command: python -m pytest -q
