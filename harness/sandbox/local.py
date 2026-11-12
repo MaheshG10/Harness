@@ -18,9 +18,12 @@ def _limits(cpu_seconds: int, mem_bytes: int):
     def apply():  # runs in the child before exec
         import resource
 
-        resource.setrlimit(resource.RLIMIT_CPU, (cpu_seconds, cpu_seconds))
-        resource.setrlimit(resource.RLIMIT_AS, (mem_bytes, mem_bytes))
         os.setsid()
+        resource.setrlimit(resource.RLIMIT_CPU, (cpu_seconds, cpu_seconds))
+        try:
+            resource.setrlimit(resource.RLIMIT_AS, (mem_bytes, mem_bytes))
+        except (ValueError, OSError):
+            pass  # macOS does not support an address-space cap; CPU cap still applies
 
     return apply
 
