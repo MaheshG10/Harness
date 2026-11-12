@@ -130,3 +130,15 @@ def test_llm_error_ends_run_cleanly():
 
     result, _ = run_local([boom])
     assert result.status == "error" and "bad request" in result.error
+
+
+def test_cli_run_prints_trajectory_and_verifies(monkeypatch, capsys):
+    from harness import cli
+    from harness.config import Settings
+
+    monkeypatch.setattr(Settings, "client", lambda self, model=None: ScriptedLLM(SCRIPTS["mean_off_by_one"]))
+    code = cli.main(["run", str(TASKS / "mean_off_by_one"), "--sandbox", "local"])
+    out = capsys.readouterr().out
+    assert code == 0
+    assert "edit_file(path=stats.py" in out
+    assert "tests    PASS" in out and "status   finished" in out
